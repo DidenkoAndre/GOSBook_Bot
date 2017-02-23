@@ -5,12 +5,6 @@ from telegram import Document, Bot
 from telegram.error import NetworkError, Unauthorized, TelegramError
 import time
 
-TOKEN = '305103696:AAGtt_a0EjkvU7F9ySpi1Snn6eHkMgWRW0U'
-updater = Updater(token = TOKEN)
-dispatcher = updater.dispatcher
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', \
-                    level=logging.INFO)
 
 def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
@@ -71,23 +65,24 @@ def unsubscribe(bot, update):
     del_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку о обновлениях ГОСбука!")
 
-# Command handlers
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
-book_handler = CommandHandler('book', getbook)
-dispatcher.add_handler(book_handler)
-subscribe_handler = CommandHandler('subscribe',subscribe)
-dispatcher.add_handler(subscribe_handler)
-unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
-dispatcher.add_handler(unsubscribe_handler)
+if __name__ == '__main__':
+	TOKEN = '305103696:AAGtt_a0EjkvU7F9ySpi1Snn6eHkMgWRW0U'
+	updater = Updater(token = TOKEN)
+	dispatcher = updater.dispatcher
 
-updater.start_polling()
-print "Hello WOrld"
+	logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', \
+                    level=logging.INFO)
+	# Command handlers
+	start_handler = CommandHandler('start', start)
+	dispatcher.add_handler(start_handler)
+	book_handler = CommandHandler('book', getbook)
+	dispatcher.add_handler(book_handler)
+	subscribe_handler = CommandHandler('subscribe',subscribe)
+	dispatcher.add_handler(subscribe_handler)
+	unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
+	dispatcher.add_handler(unsubscribe_handler)
 
-bot = Bot(token=TOKEN)
-while True:
-    for id in get_subscribers():
-        bot.sendMessage(chat_id = id, text = "Привет, подписота")
-        time.sleep(1)
+	updater.start_polling()
+	print "Hello WOrld"
 
-updater.idle()
+	updater.idle()
