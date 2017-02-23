@@ -1,27 +1,16 @@
 # -*- coding: utf-8 -*-
-
-from telegram.ext import Updater
 import logging
-from telegram.ext import CommandHandler
-from telegram import Document, File, Bot
+from telegram.ext import CommandHandler, Updater
+from telegram import Document, Bot
 from telegram.error import NetworkError, Unauthorized, TelegramError
-
 import time
 
 TOKEN = '305103696:AAGtt_a0EjkvU7F9ySpi1Snn6eHkMgWRW0U'
 updater = Updater(token = TOKEN)
-
 dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', \
                     level=logging.INFO)
-
-def start(bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?")
-
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
-	
 
 def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
@@ -38,48 +27,57 @@ def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
     return upload_from_disk()
 
-	
+def start(bot, update):
+    bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?")
+
 def getbook(bot, update):
-	send_file(bot, "_main.pdf", update.message.chat_id, None,
+    send_file(bot, "_main.pdf", update.message.chat_id, None,
                       caption="Вот ваша книга")
-					  
-subscribe_list = open("subscribelist.txt").read().splitlines()
+
+def get_subscribers():
+    with open('subscribers.txt', 'r') as db:
+        ids = db.read().splitlines()
+    res = []
+    for id in ids:
+        res.append(int(id))
+    return res
+
+def add_subscriber(chat_id):
+    with open('subscribers.txt', 'a') as db:
+        db.write(str(chat_id) + '\n')
+    return None
+
+def del_subscriber(chat_id):
+    with open('subscribers.txt', 'r') as db:
+        subscribers = db.read().splitlines()
+        subscribers.remove(str(chat_id))
+    with open('subscribers.txt', 'w') as db:
+        db.write('\n'.join(subscribers))
+    return None
 
 def subscribe(bot, update):
-	id = update.message.chat_id
-	if id in subscribe_list:
-		bot.sendMessage(chat_id=id, text = "Вы уже являетесь подписчиком!")
-		return None	
-	
-	thefile = open('subscribelist.txt', 'w')
-	thefile.write("%s\n" % id)
-	
-	bot.sendMessage(chat_id=id, text = "Вы успешно подписались на рассылку о обновлениях ГОСбука!")
-	print subscribe_list
-	thefile.close()
-	
-def unsubscribe(bot, update):
-	id = update.message.chat_id
-	if id not in subscribe_list:
-		bot.sendMessage(chat_id=id, text = "Вы не являетесь подписчиком!")
-		return None
-		
-	thefile = open('subscribelist.txt', 'rw')
-	lines = thefile.readlines()
-	for line in lines:
-		if line != str(id) + "\n":
-			thefile.write(line)
-			
-	thefile.close()
-	
-	bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку о обновлениях ГОСбука!")
+    id = update.message.chat_id
+    if id in get_subscribers():
+        bot.sendMessage(chat_id=id, text = "Вы уже являетесь подписчиком!")
+        return None
+    add_subscriber(id)	
+    bot.sendMessage(chat_id=id, text = "Вы успешно подписались на рассылку о обновлениях ГОСбука!")
 
+def unsubscribe(bot, update):
+    id = update.message.chat_id
+    if id not in get_subscribers():
+        bot.sendMessage(chat_id=id, text = "Вы не являетесь подписчиком!")
+        return None
+    del_subscriber(id)
+    bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку о обновлениях ГОСбука!")
+
+# Command handlers
+start_handler = CommandHandler('start', start)
+dispatcher.add_handler(start_handler)
 book_handler = CommandHandler('book', getbook)
 dispatcher.add_handler(book_handler)
-
 subscribe_handler = CommandHandler('subscribe',subscribe)
 dispatcher.add_handler(subscribe_handler)
-
 unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
 dispatcher.add_handler(unsubscribe_handler)
 
@@ -88,9 +86,8 @@ print "Hello WOrld"
 
 bot = Bot(token=TOKEN)
 while True:
-	for id in subscribe_list:
-		bot.sendMessage(chat_id = id, text = "Привет, подписота")
-		time.sleep(1)
-
+    for id in get_subscribers():
+        bot.sendMessage(chat_id = id, text = "Привет, подписота")
+        time.sleep(1)
 
 updater.idle()
