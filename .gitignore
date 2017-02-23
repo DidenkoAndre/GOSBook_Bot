@@ -1,0 +1,29 @@
+﻿# Windows image file caches
+**/Thumbs.db
+**/ehthumbs.db
+
+# сonfig file
+**/*.ini
+
+# tmp files
+**/*.swp
+
+# TeX tmp files
+**/*.aux
+**/*.bbl
+**/*.blg
+**/*.synctex
+**/*.log
+**/*.dvi
+**/*.idx
+**/*.ilg
+**/*.ind
+**/*.toc
+**/*.lot
+**/*.lof
+**/*.out
+**/*.bak
+**/*.gz
+**/*.pdf
+
+**/*.pem
