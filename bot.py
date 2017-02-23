@@ -25,7 +25,7 @@ def start(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?")
 
 def getbook(bot, update):
-    send_file(bot, "_main.pdf", update.message.chat_id, None,
+    send_file(bot, "/home/ec2-user/GOS_book/_main.pdf", update.message.chat_id, None,
                       caption="Вот ваша книга")
 
 def get_subscribers():
@@ -46,7 +46,7 @@ def del_subscriber(chat_id):
         subscribers = db.read().splitlines()
         subscribers.remove(str(chat_id))
     with open('subscribers.txt', 'w') as db:
-        db.write('\n'.join(subscribers))
+        db.write('\n'.join(subscribers)+'\n')
     return None
 
 def subscribe(bot, update):
