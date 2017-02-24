@@ -22,7 +22,7 @@ class S(BaseHTTPRequestHandler):
         if proc.returncode == 0:
             proc2 = subprocess.Popen(['pdflatex', '_main.tex'])
             proc2.communicate()
-			os.rename('_main.pdf','GOSBook.pdf')
+	    os.rename('_main.pdf','GOSBook.pdf')
             os.chdir("/home/ec2-user/gosbookbot")
             broadcast = subprocess.Popen(['python','broadcast.py'])
             broadcast.communicate()
