@@ -4,7 +4,7 @@ from telegram import Document, Bot
 from telegram.error import NetworkError, Unauthorized, TelegramError
 import time
 
-with open('GOSBook_Bot_token') as file:
+with open('GOSBook_Bot_token', 'r') as file:
 	TOKEN = file.read().strip()
 	
 bot = Bot(token = TOKEN)

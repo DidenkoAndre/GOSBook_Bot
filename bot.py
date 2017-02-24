@@ -64,9 +64,6 @@ def subscribe(bot, update):
         return None
     add_subscriber(id)	
     bot.sendMessage(chat_id=id, text = "Вы успешно подписались на рассылку об обновлениях ГОСбука!")
-	
-	bot.sendMessage(chat_id=didenko_andre_id, text = \
-	"На твоего бота подписался еще один человек, теперь у бота " + str(len(get_subscribers())) + "подписчиков.")
 
 def unsubscribe(bot, update):
     id = update.message.chat_id
@@ -75,17 +72,15 @@ def unsubscribe(bot, update):
         return None
     del_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку на рассылку об обновлениях ГОСбука!")
-	
-	bot.sendMessage(chat_id=didenko_andre_id, text = \
-	"От твоего бота кто-то отписался, теперь у бота " + str(len(get_subscribers())) + "подписчиков.")
+
+def get_numberofsubs(bot, update):
+	id = update.message.chat_id
+	bot.sendMessage(chat_id = id, text = "Количество подписчиков у этого бота: " + str(len(get_subscribers())))
 
 if __name__ == '__main__':
-	with open('GOSBook_Bot_token') as file1:
-		TOKEN = file.read().strip()
-		
-	with open('didenko_andre_id') as file2:
-		didenko_andre_id = file.read().strip()
-	
+	with open('GOSBook_Bot_token', 'r') as file1:
+		TOKEN = file1.read().strip()
+
 	updater = Updater(token = TOKEN)
 	dispatcher = updater.dispatcher
 
@@ -102,6 +97,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(subscribe_handler)
 	unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
 	dispatcher.add_handler(unsubscribe_handler)
+	howmuch_handler = CommandHandler('howmuch', get_numberofsubs)
+	dispatcher.add_handler(howmuch_handler)
 
 	updater.start_polling()
 	print "Hello WOrld"

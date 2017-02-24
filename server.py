@@ -15,7 +15,7 @@ class S(BaseHTTPRequestHandler):
     def do_POST(self):
         # Doesn't do anything with posted data
         self._set_headers()
-		'''
+	'''
         os.chdir("/home/ec2-user/GOS_book/")
         pull = subprocess.Popen(['git','pull','origin'])
         proc = subprocess.Popen(['pdflatex', '_main.tex'])
@@ -26,9 +26,8 @@ class S(BaseHTTPRequestHandler):
 	    os.rename('_main.pdf','GOSBook.pdf')
             os.chdir("/home/ec2-user/gosbookbot")
             broadcast = subprocess.Popen(['python','broadcast.py'])
-            broadcast.communicate()
-		'''
-		pull = subprocess.Popen(['make'])
+            broadcast.communicate()'''
+        pull = subprocess.Popen(['make'])
         
 def run(server_class=HTTPServer, handler_class=S, port=80):
     server_address = ('0.0.0.0', port)
