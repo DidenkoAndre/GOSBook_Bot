@@ -34,7 +34,7 @@ def help(bot, update):
 	PS. Если я как-то неправильно работаю или у тебя есть интересные предложения по улучшению меня, то напиши, пожалуйста, моему создателю @didenko_andre")
 
 def getbook(bot, update):
-    send_file(bot, "/home/ec2-user/GOS_book/_main.pdf", update.message.chat_id, None,
+    send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", update.message.chat_id, None,
                       caption="Вот последняя версия ГОСбука")
 
 def get_subscribers():
