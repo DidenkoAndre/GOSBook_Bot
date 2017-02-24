@@ -5,7 +5,6 @@ from telegram import Document, Bot
 from telegram.error import NetworkError, Unauthorized, TelegramError
 import time
 
-
 def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
     def upload(file_id):
@@ -65,6 +64,9 @@ def subscribe(bot, update):
         return None
     add_subscriber(id)	
     bot.sendMessage(chat_id=id, text = "Вы успешно подписались на рассылку об обновлениях ГОСбука!")
+	
+	bot.sendMessage(chat_id=didenko_andre_id, text = \
+	"На твоего бота подписался еще один человек, теперь у бота " + str(len(get_subscribers())) + "подписчиков.")
 
 def unsubscribe(bot, update):
     id = update.message.chat_id
@@ -73,9 +75,17 @@ def unsubscribe(bot, update):
         return None
     del_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку на рассылку об обновлениях ГОСбука!")
+	
+	bot.sendMessage(chat_id=didenko_andre_id, text = \
+	"От твоего бота кто-то отписался, теперь у бота " + str(len(get_subscribers())) + "подписчиков.")
 
 if __name__ == '__main__':
-	TOKEN = '305103696:AAGtt_a0EjkvU7F9ySpi1Snn6eHkMgWRW0U'
+	with open('GOSBook_Bot_token') as file1:
+		TOKEN = file.read().strip()
+		
+	with open('didenko_andre_id') as file2:
+		didenko_andre_id = file.read().strip()
+	
 	updater = Updater(token = TOKEN)
 	dispatcher = updater.dispatcher
 

@@ -4,7 +4,9 @@ from telegram import Document, Bot
 from telegram.error import NetworkError, Unauthorized, TelegramError
 import time
 
-TOKEN = '305103696:AAGtt_a0EjkvU7F9ySpi1Snn6eHkMgWRW0U'
+with open('GOSBook_Bot_token') as file:
+	TOKEN = file.read().strip()
+	
 bot = Bot(token = TOKEN)
 
 for id in get_subscribers():
