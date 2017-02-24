@@ -17,10 +17,10 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
         os.chdir("/home/ec2-user/GOS_book/")
         pull = subprocess.Popen(['git','pull','origin'])
-        proc = subprocess.Popen(['pdflatex', '_main.tex'])
+        proc = subprocess.Popen(['pdflatex', 'GOSBook.tex'])
         proc.communicate()
         if proc.returncode == 0:
-            proc2 = subprocess.Popen(['pdflatex', '_main.tex'])
+            proc2 = subprocess.Popen(['pdflatex', 'GOSBook.tex'])
             proc2.communicate()
             os.chdir("/home/ec2-user/gosbookbot")
             broadcast = subprocess.Popen(['python','broadcast.py'])
