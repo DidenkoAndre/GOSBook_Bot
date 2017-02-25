@@ -23,7 +23,39 @@ def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
     return upload_from_disk()
 
+def add_starter(chat_id):
+    with open('starters.txt', 'a') as db:
+        db.write(str(chat_id) + '\n')
+    return None
+	
+def get_starters():
+    with open('starters.txt', 'r') as db:
+        ids = db.read().splitlines()
+    res = []
+    for id in ids:
+        res.append(int(id))
+    return res
+	
+def get_numberofstarters(bot, update):
+	id = update.message.chat_id
+	bot.sendMessage(chat_id = id, text = "Количество стартеров у этого бота: " + str(len(get_starters())))
+	
+def get_users_starters(bot, update):
+	id = update.message.chat_id
+	sub_list = []
+	for sub in get_starters():
+		chat = bot.getChat(sub)
+		if chat.type == 'private':
+			sub_list.append(chat.first_name + ' ' + chat.last_name)
+		else:
+			sub_list.append("Группа: " + chat.title)
+	message = '\n'.join(sub_list)
+	bot.sendMessage(chat_id = id, text = 'Список стартеров:\n'+message)
+	
 def start(bot, update):
+	id = update.message.chat_id
+	if id not in get_starters():
+		add_starter(id)
     bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?\n\
 	Для ознакомления со списком возможных команд, запросите /help")
 	
@@ -36,7 +68,10 @@ def help(bot, update):
 	PS. Если я как-то неправильно работаю или у тебя есть интересные предложения по улучшению меня, то напиши, пожалуйста, моему создателю @didenko_andre''')
 
 def getbook(bot, update):
-    send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", update.message.chat_id, None,
+	id = update.message.chat_id
+	if id not in get_starters():
+		add_starter(id)
+    send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None,
                       caption="Вот последняя версия ГОСбука")
 
 def get_subscribers():
@@ -116,6 +151,10 @@ if __name__ == '__main__':
 	dispatcher.add_handler(howmuch_handler)
 	users_handler = CommandHandler('show_subs', get_users)
 	dispatcher.add_handler(users_handler)
+	howmanystar_handler = CommandHandler('howmanystar', get_numberofstarters)
+	dispatcher.add_handler(howmuchstar_handler)
+	starters_handler = CommandHandler('show_starters', get_users_starters)
+	dispatcher.add_handler(starters_handler)
 
 	updater.start_polling()
 	print "Hello WOrld"
