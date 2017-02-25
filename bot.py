@@ -56,7 +56,7 @@ def start(bot, update):
 	id = update.message.chat_id
 	if id not in get_starters():
 		add_starter(id)
-    bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?\n\
+        bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?\n\
 	Для ознакомления со списком возможных команд, запросите /help")
 	
 def help(bot, update):
@@ -71,7 +71,7 @@ def getbook(bot, update):
 	id = update.message.chat_id
 	if id not in get_starters():
 		add_starter(id)
-    send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None,
+        send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None,
                       caption="Вот последняя версия ГОСбука")
 
 def get_subscribers():
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 	users_handler = CommandHandler('show_subs', get_users)
 	dispatcher.add_handler(users_handler)
 	howmanystar_handler = CommandHandler('howmanystar', get_numberofstarters)
-	dispatcher.add_handler(howmuchstar_handler)
+	dispatcher.add_handler(howmanystar_handler)
 	starters_handler = CommandHandler('show_starters', get_users_starters)
 	dispatcher.add_handler(starters_handler)
 
