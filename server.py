@@ -1,7 +1,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 import subprocess
-import os
+import json
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -15,20 +15,13 @@ class S(BaseHTTPRequestHandler):
     def do_POST(self):
         # Doesn't do anything with posted data
         self._set_headers()
-	'''
-        os.chdir("/home/ec2-user/GOS_book/")
-        pull = subprocess.Popen(['git','pull','origin'])
-        proc = subprocess.Popen(['pdflatex', '_main.tex'])
-        proc.communicate()
-        if proc.returncode == 0:
-            proc2 = subprocess.Popen(['pdflatex', '_main.tex'])
-            proc2.communicate()
-	    os.rename('_main.pdf','GOSBook.pdf')
-            os.chdir("/home/ec2-user/gosbookbot")
-            broadcast = subprocess.Popen(['python','broadcast.py'])
-            broadcast.communicate()'''
+        content_len = int(self.headers.getheader('content-length')) 
+        post_body = self.rfile.read(content_len)
+        answer = json.loads(post_body)
+        commit_message = answer['head_commit']['message']
         pull = subprocess.Popen(['make'])
-        
+        broadcast = subprocess.Popen(['python', 'broadcast.py', commit_message])
+
 def run(server_class=HTTPServer, handler_class=S, port=80):
     server_address = ('0.0.0.0', port)
     httpd = server_class(server_address, handler_class)

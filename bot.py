@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 from telegram.ext import CommandHandler, Updater
-from telegram import Document, Bot
+from telegram import Document, Bot, Chat
 from telegram.error import NetworkError, Unauthorized, TelegramError
 import time
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
@@ -25,12 +28,12 @@ def start(bot, update):
 	Для ознакомления со списком возможных команд, запросите /help")
 	
 def help(bot, update):
-	bot.sendMessage(chat_id=update.message.chat_id, text = "Список команд данного бота:\n\
-	/book -- получить последнюю версию ГОСБука в pdf-формате\n\
-	/subscribe -- подписаться на рассылку об обновлениях ГОСБука, чтобы автоматически получать новые версии ГОСБука, а также читать новости, касающиеся ГОСа\n\
-	/unsubscribe -- отписаться от выше указанной новостной рассылки\n\
-	/help -- вывести список команд данного бота\n\n\
-	PS. Если я как-то неправильно работаю или у тебя есть интересные предложения по улучшению меня, то напиши, пожалуйста, моему создателю @didenko_andre")
+	bot.sendMessage(chat_id=update.message.chat_id, text = '''Список команд данного бота:\n
+	/book -- получить последнюю версию ГОСБука в pdf-формате\n
+	/subscribe -- подписаться на рассылку об обновлениях ГОСБука, чтобы автоматически получать новые версии ГОСБука, а также читать новости, касающиеся ГОСа\n
+	/unsubscribe -- отписаться от выше указанной новостной рассылки\n
+	/help -- вывести список команд данного бота\n\n
+	PS. Если я как-то неправильно работаю или у тебя есть интересные предложения по улучшению меня, то напиши, пожалуйста, моему создателю @didenko_andre''')
 
 def getbook(bot, update):
     send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", update.message.chat_id, None,
@@ -77,6 +80,18 @@ def get_numberofsubs(bot, update):
 	id = update.message.chat_id
 	bot.sendMessage(chat_id = id, text = "Количество подписчиков у этого бота: " + str(len(get_subscribers())))
 
+def get_users(bot, update):
+	id = update.message.chat_id
+	sub_list = []
+	for sub in get_subscribers():
+		chat = bot.getChat(sub)
+		if chat.type == 'private':
+			sub_list.append(chat.first_name + ' ' + chat.last_name)
+		else:
+			sub_list.append("Группа: " + chat.title)
+	message = '\n'.join(sub_list)
+	bot.sendMessage(chat_id = id, text = 'Список подписчиков:\n'+message)
+
 if __name__ == '__main__':
 	with open('GOSBook_Bot_token', 'r') as file1:
 		TOKEN = file1.read().strip()
@@ -99,6 +114,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(unsubscribe_handler)
 	howmuch_handler = CommandHandler('howmuch', get_numberofsubs)
 	dispatcher.add_handler(howmuch_handler)
+	users_handler = CommandHandler('show_subs', get_users)
+	dispatcher.add_handler(users_handler)
 
 	updater.start_polling()
 	print "Hello WOrld"
