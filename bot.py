@@ -126,6 +126,14 @@ def get_users(bot, update):
 			sub_list.append("Группа: " + chat.title)
 	message = '\n'.join(sub_list)
 	bot.sendMessage(chat_id = id, text = 'Список подписчиков:\n'+message)
+	
+def secretinfo(bot, update):
+	bot.sendMessage(chat_id=update.message.chat_id, text = '''Список секретных команд данного бота:\n
+	/howmuch -- узнать количество подписчиков данного бота\n
+	/show_subs -- показать список подписчиков\n
+	/howmanystar -- узнать количество стартеров\n
+	/show_starters -- вывести список стартеров\n''')
+
 
 if __name__ == '__main__':
 	with open('GOSBook_Bot_token', 'r') as file1:
@@ -155,6 +163,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(howmanystar_handler)
 	starters_handler = CommandHandler('show_starters', get_users_starters)
 	dispatcher.add_handler(starters_handler)
+	secretinfo_handler = CommandHandler('secretinfo', secretinfo)
+	dispatcher.add_handler(secretinfo_handler)
 
 	updater.start_polling()
 	print "Hello WOrld"
