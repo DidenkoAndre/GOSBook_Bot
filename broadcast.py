@@ -13,6 +13,8 @@ with open('GOSBook_Bot_token', 'r') as file:
 bot = Bot(token = TOKEN)
 message = sys.argv[1]
 
+
+time.sleep(60)
 for id in get_subscribers():
     chat = bot.getChat(id)
     prefix = ''
