@@ -17,6 +17,7 @@ for id in get_subscribers():
     chat = bot.getChat(id)
     prefix = ''
     if chat.type == 'private':
-       prefix = 'Дорогой(-ая) ' + chat.first_name + '!\n'
-    send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None, caption=prefix+"Вышла новая версия ГОСбука.\n\n"+message)
+       	prefix = 'Дорогой(-ая) ' + chat.first_name + '!\n'
+    	send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None, caption=prefix+"Вышла новая версия ГОСбука.")
+    	bot.sendMessage(chat_id=id, text = message)
     time.sleep(1)
