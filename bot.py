@@ -8,6 +8,23 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+from functools import wraps
+
+LIST_OF_ADMINS = []
+with open('admin_ids', 'r') as admins:
+    for chat_id in admins.read().splitlines():
+        LIST_OF_ADMINS.append(int(chat_id))
+
+def restricted(func):
+    @wraps(func)
+    def wrapped(bot, update, *args, **kwargs):
+        user_id = update.message.chat_id
+        if user_id not in LIST_OF_ADMINS:
+            print("Unauthorized access denied for {}.".format(user_id))
+            return
+        return func(bot, update, *args, **kwargs)
+    return wrapped
+
 def send_file(bot, filename, chat_id, _type, caption, **kwargs):
 
     def upload(file_id):
@@ -27,7 +44,7 @@ def add_starter(chat_id):
     with open('starters.txt', 'a') as db:
         db.write(str(chat_id) + '\n')
     return None
-	
+
 def get_starters():
     with open('starters.txt', 'r') as db:
         ids = db.read().splitlines()
@@ -35,11 +52,13 @@ def get_starters():
     for id in ids:
         res.append(int(id))
     return res
-	
+
+@restricted
 def get_numberofstarters(bot, update):
 	id = update.message.chat_id
 	bot.sendMessage(chat_id = id, text = "Количество стартеров у этого бота: " + str(len(get_starters())))
-	
+
+@restricted
 def get_users_starters(bot, update):
 	id = update.message.chat_id
 	sub_list = []
@@ -51,14 +70,14 @@ def get_users_starters(bot, update):
 			sub_list.append("Группа: " + chat.title)
 	message = '\n'.join(sub_list)
 	bot.sendMessage(chat_id = id, text = 'Список стартеров:\n'+message)
-	
+
 def start(bot, update):
 	id = update.message.chat_id
 	if id not in get_starters():
 		add_starter(id)
         bot.sendMessage(chat_id=update.message.chat_id, text = "Я бот, вижу, вы хотите поботать ГОС?\n\
 	Для ознакомления со списком возможных команд, запросите /help")
-	
+
 def help(bot, update):
 	bot.sendMessage(chat_id=update.message.chat_id, text = '''Список команд данного бота:\n
 	/book -- получить последнюю версию ГОСБука в pdf-формате\n
@@ -100,7 +119,7 @@ def subscribe(bot, update):
     if id in get_subscribers():
         bot.sendMessage(chat_id=id, text = "Вы уже являетесь подписчиком!")
         return None
-    add_subscriber(id)	
+    add_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы успешно подписались на рассылку об обновлениях ГОСбука!")
 
 def unsubscribe(bot, update):
@@ -111,10 +130,12 @@ def unsubscribe(bot, update):
     del_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку на рассылку об обновлениях ГОСбука!")
 
+@restricted
 def get_numberofsubs(bot, update):
 	id = update.message.chat_id
 	bot.sendMessage(chat_id = id, text = "Количество подписчиков у этого бота: " + str(len(get_subscribers())))
 
+@restricted
 def get_users(bot, update):
 	id = update.message.chat_id
 	sub_list = []
@@ -126,14 +147,14 @@ def get_users(bot, update):
 			sub_list.append("Группа: " + chat.title)
 	message = '\n'.join(sub_list)
 	bot.sendMessage(chat_id = id, text = 'Список подписчиков:\n'+message)
-	
+
+@restricted
 def secretinfo(bot, update):
 	bot.sendMessage(chat_id=update.message.chat_id, text = '''Список секретных команд данного бота:\n
 	/howmuch -- узнать количество подписчиков данного бота\n
 	/show_subs -- показать список подписчиков\n
 	/howmanystar -- узнать количество стартеров\n
 	/show_starters -- вывести список стартеров\n''')
-
 
 if __name__ == '__main__':
 	with open('GOSBook_Bot_token', 'r') as file1:
@@ -155,6 +176,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(subscribe_handler)
 	unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
 	dispatcher.add_handler(unsubscribe_handler)
+
+	# restricted commands
 	howmuch_handler = CommandHandler('howmuch', get_numberofsubs)
 	dispatcher.add_handler(howmuch_handler)
 	users_handler = CommandHandler('show_subs', get_users)
@@ -167,6 +190,4 @@ if __name__ == '__main__':
 	dispatcher.add_handler(secretinfo_handler)
 
 	updater.start_polling()
-	print "Hello WOrld"
-
 	updater.idle()
