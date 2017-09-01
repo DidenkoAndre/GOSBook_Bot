@@ -1,0 +1,1 @@
+ssh -i "LinuxOregon.pem" ec2-user@ec2-35-167-201-66.us-west-2.compute.amazonaws.com
