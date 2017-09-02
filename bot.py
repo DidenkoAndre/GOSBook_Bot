@@ -90,7 +90,7 @@ def getbook(bot, update):
 	id = update.message.chat_id
 	if id not in get_starters():
 		add_starter(id)
-        send_file(bot, "/home/ec2-user/GOS_book/GOSBook.pdf", id, None,
+        send_file(bot, "/home/ec2-user/GOS_book/GOSBook Matan.pdf", id, None,
                       caption="Вот последняя версия ГОСбука")
 
 def get_subscribers():
