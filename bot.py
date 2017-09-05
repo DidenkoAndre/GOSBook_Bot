@@ -130,6 +130,13 @@ def unsubscribe(bot, update):
     del_subscriber(id)
     bot.sendMessage(chat_id=id, text = "Вы прекратили свою подписку на рассылку об обновлениях ГОСбука!")
 
+def stop(bot, update):
+	id = update.message.chat_id
+	if id in get_subscribers():
+		del_subscriber(id)
+        bot.sendMessage(chat_id=update.message.chat_id, text = '''До свидания, надеюсь, этот бот Вам хорошо прослужил :)\n
+        С уважением, @didenko_andre''')
+
 @restricted
 def get_numberofsubs(bot, update):
 	id = update.message.chat_id
@@ -176,6 +183,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(subscribe_handler)
 	unsubscribe_handler = CommandHandler('unsubscribe',unsubscribe)
 	dispatcher.add_handler(unsubscribe_handler)
+	stop_handler = CommandHandler('stop', stop)
+	dispatcher.add_handler(stop_handler)
 
 	# restricted commands
 	howmuch_handler = CommandHandler('howmuch', get_numberofsubs)
