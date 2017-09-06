@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from bot import send_file, get_subscribers
+from bot import send_file, get_subscribers, get_suspects
 from telegram import Document, Bot
 from telegram.error import TelegramError
 import time
@@ -12,15 +12,6 @@ with open('GOSBook_Bot_token', 'r') as file:
 	
 bot = Bot(token = TOKEN)
 message = sys.argv[1]
-
-
-def get_suspects():
-    with open('suspects.txt', 'r') as db:
-        ids = db.read().splitlines()
-    res = []
-    for id in ids:
-        res.append(int(id))
-    return res
 
 def check_suspect(suspect_id):    
     with open('suspects.txt', 'r') as db:
