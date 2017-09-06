@@ -218,6 +218,17 @@ def get_suspects():
         res.append(int(id))
     return res
 
+def check_suspect(suspect_id):
+    with open('suspects.txt', 'r') as db:
+        suspects = db.read().splitlines()
+        suspects.append(str(suspect_id))
+        if ((sum(1 for i in get_suspects() if i == suspect_id)) > 5):
+                suspects = [id for id in suspects if id != str(suspect_id)]
+                del_subscriber(suspect_id)
+    with open('suspects.txt', 'w') as db:
+        db.write('\n'.join(suspects[-100:])+'\n')
+    return None
+
 @restricted
 def get_suspectusers(bot, update):
 	id = update.message.chat_id
