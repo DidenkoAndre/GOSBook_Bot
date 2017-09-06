@@ -235,10 +235,11 @@ def get_suspectusers(bot, update):
 	sub_list = []
 	for sub in get_suspects():
 		chat = bot.getChat(sub)
+		badtimes = sum(1 for i in get_suspects() if i == sub)
 		if chat.type == 'private':
-			sub_list.append(chat.first_name + ' ' + chat.last_name)
+			sub_list.append(chat.first_name + ' ' + chat.last_name + ' ' + str(badtimes))
 		else:
-			sub_list.append("Группа: " + chat.title)
+			sub_list.append("Группа: " + chat.title + ' ' + str(badtimes))
 	sub_list = list(set(sub_list))
 	message = '\n'.join(sub_list)
 	bot.sendMessage(chat_id = id, text = 'Список подозреваемых:\n'+message)
