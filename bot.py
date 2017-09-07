@@ -90,7 +90,7 @@ def getbook(bot, update):
 	id = update.message.chat_id
 	if id not in get_starters():
 		add_starter(id)
-        send_file(bot, "/home/ec2-user/GOS_book/GOSBook Matan.pdf", id, None,
+        send_file(bot, "/home/ec2-user/GOS_book/GOSBook_Matan.pdf", id, None,
                       caption="Вот последняя версия ГОСбука")
 
 
@@ -148,7 +148,7 @@ def add_testsub(chat_id):
         db.write(str(chat_id) + '\n')
     return None
 
-def del_testsubs(chat_id):
+def del_testsub(chat_id):
     with open('testsubs.txt', 'r') as db:
         testsubs = db.read().splitlines()
         testsubs.remove(str(chat_id))
@@ -249,10 +249,6 @@ def saytopeople(bot, update):
 	message = update.message.text
 	message = message.split("\n",2)[2];
 	for id in get_subscribers():
-		chat = bot.getChat(id)
-   		prefix = ''
-   		if chat.type == 'private':
-      	 		prefix = 'Дорогой(-ая) ' + chat.first_name + '!\n'
 		try:    
     			bot.sendMessage(chat_id=id, text = message)
 		except TelegramError as err:
@@ -273,7 +269,7 @@ def secretinfo(bot, update):
 /howmanytest -- узнать количество БЕТА-тестеров\n
 /show_testsubs -- показать БЕТА-тестеров\n
 \n
-/saytopeople -- начни сообщение с двух новых строк и оно будет бродкастено по подписчикам''')
+/saytopeople <<да>> -- начни любым словом и начни сообщение с двух новых строк и оно будет бродкастено по подписчикам''')
 
 if __name__ == '__main__':
 	with open('GOSBook_Bot_token', 'r') as file1:

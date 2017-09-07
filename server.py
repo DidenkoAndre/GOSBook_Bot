@@ -2,6 +2,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 import subprocess
 import json
+import requests                                                                                  
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -21,6 +22,14 @@ class S(BaseHTTPRequestHandler):
         commit_message = answer['head_commit']['message']
         pull = subprocess.Popen(['make'])
         broadcast = subprocess.Popen(['python', 'broadcast.py', commit_message])
+	result = None
+	while result is None: 
+		try:
+			r = requests.get('http://latexonline.cc/compile?git=https://github.com/DidenkoAndre/GOS_book&target=_main.tex&download=GOSBook_Matan.pdf&command=pdflatex')
+			result = 1
+		except:
+			pass
+	print r
 
 def run(server_class=HTTPServer, handler_class=S, port=80):
     server_address = ('0.0.0.0', port)
