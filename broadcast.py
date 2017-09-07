@@ -14,7 +14,7 @@ bot = Bot(token = TOKEN)
 message = sys.argv[1]
 
 time.sleep(60)
-for id in get_subsribers():
+for id in get_subscribers():
 	chat = bot.getChat(id)
    	prefix = ''
    	if chat.type == 'private':
