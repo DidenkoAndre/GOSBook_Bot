@@ -246,30 +246,59 @@ def get_suspectusers(bot, update):
 
 @restricted
 def saytopeople(bot, update):
-	message = update.message.text
-	message = message.split("\n",2)[2];
-	for id in get_subscribers():
+	id = update.message.chat_id
+	try:
+		message = update.message.text
+		message = message.split("\n",2)[2]
+	except:
+		bot.sendMessage(chat_id = id, text = 'Сообщение не отправлено. Неправильный формат сообщения.')
+		return None
+	
+	with open('mode_list', 'r') as file:
+	        mode_list = int(file.read())   # 0 - test; 1 -- true work. 
+
+	if mode_list == 1:
+        	audience  = get_subscribers()
+	if mode_list == 0:
+        	audience = get_testsubs()
+
+	for ids in audience:
 		try:    
-    			bot.sendMessage(chat_id=id, text = message)
+    			bot.sendMessage(chat_id=ids, text = message)
 		except TelegramError as err:
-			check_suspect(id)
+			check_suspect(ids)
 		time.sleep(1)
+
+
+@restricted
+def changemode(bot, update):
+	id = update.message.chat_id
+
+	with open('mode_list', 'r') as db:
+        	mode = int(db.read())
+        
+	with open('mode_list', 'w') as db:
+        	mode = 1 - mode
+        	db.write(str(mode))
+
+	bot.sendMessage(chat_id = id, text = 'теперь включен режим ' + str(mode) + '.\n 0 -- тест, 1 -- норма.')
+
 
 @restricted
 def secretinfo(bot, update):
 	bot.sendMessage(chat_id=update.message.chat_id, text = '''**Список секретных команд данного бота:**\n
-/howmuch -- узнать количество подписчиков данного бота\n
-/show_subs -- показать список подписчиков\n
-/howmanystar -- узнать количество стартеров\n
-/show_starters -- вывести список стартеров\n
-/show_suspects -- вывести список подозреваемых\n
-\n
-/testsubscribe -- стать БЕТА-тестером\n
-/testunsubscribe -- перестать быть БЕТА-тестером\n
-/howmanytest -- узнать количество БЕТА-тестеров\n
-/show_testsubs -- показать БЕТА-тестеров\n
-\n
-/saytopeople <<да>> -- начни любым словом и начни сообщение с двух новых строк и оно будет бродкастено по подписчикам''')
+/howmuch -- узнать количество подписчиков данного бота
+/show_subs -- показать список подписчиков
+/howmanystar -- узнать количество стартеров
+/show_starters -- вывести список стартеров
+/show_suspects -- вывести список подозреваемых
+
+/testsubscribe -- стать БЕТА-тестером
+/testunsubscribe -- перестать быть БЕТА-тестером
+/howmanytest -- узнать количество БЕТА-тестеров
+/show_testsubs -- показать БЕТА-тестеров
+/changemode -- смени режим работы бота. Тестовый режим -- для тестовой аудитории, и нормальный режим для вещания на реальную аудиторию
+"/saytopeople \\n\\n + <<сообщение>>" --  начни сообщение после двух переходов на новую строку, и оно будет бродкастено на аудиторию''')
 
 if __name__ == '__main__':
 	with open('GOSBook_Bot_token', 'r') as file1:
@@ -316,7 +345,8 @@ if __name__ == '__main__':
 	dispatcher.add_handler(secretinfo_handler)
         saytopeople_handler = CommandHandler('saytopeople', saytopeople)
         dispatcher.add_handler(saytopeople_handler)
-
+	changemode_handler = CommandHandler('changemode', changemode)
+	dispatcher.add_handler(changemode_handler)
 
 	updater.start_polling()
 	updater.idle()

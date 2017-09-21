@@ -14,7 +14,16 @@ bot = Bot(token = TOKEN)
 message = sys.argv[1]
 
 time.sleep(60)
-for id in get_subscribers():
+
+with open('mode_list', 'r') as file:
+        mode_list = int(file.read())   # 0 - test; 1 -- true work. 
+
+if mode_list == 1:
+	audience  = get_subscribers()
+if mode_list == 0:
+	audience = get_testsubs() 
+
+for id in audience:
 	chat = bot.getChat(id)
    	prefix = ''
    	if chat.type == 'private':
